@@ -16,7 +16,7 @@ package ChapterTwo;
 public class SortInsert {
     public static void sort(Comparable[] a) {
         //详见具体算法
-        //选择排序实现
+        //插入排序实现
         int N = a.length;
         for (int i = 1; i < N; i++) {
             for (int j = i; j > 0 && less(a[j], a[j - 1]); j--) {
