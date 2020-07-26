@@ -39,17 +39,17 @@ public class SortInsert {
             a[j+1]=temp;
         }
     }
-    private static boolean less(Comparable a, Comparable b) {
+    public static boolean less(Comparable a, Comparable b) {
         return a.compareTo(b) < 0;  //使用comparable 接口
     }
 
-    private static void exch(Comparable[] a, int i, int j) {
+    public static void exch(Comparable[] a, int i, int j) {
         Comparable t = a[i];
         a[i] = a[j];
         a[j] = t;
     }
 
-    private static void show(Comparable[] a) {
+    static void show(Comparable[] a) {
         /*显示出来*/
         for (int i = 0; i < a.length; i++) {
             System.out.print(a[i] + " ");
