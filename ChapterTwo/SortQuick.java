@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * 2.6
  * 快速排序算法 2020/7/26 15：24 start ^_^ 我他妈的人傻了 写尼玛 卧槽 17:00 over
+ * 2020/7/27 改进 15:13
  */
 public class SortQuick {
     private static Comparable v;
@@ -14,7 +16,8 @@ public class SortQuick {
     }
 
     private static void sort(Comparable[] a, int lo, int hi) {
-        if (hi <= lo) return;
+        if (hi <= lo) {return;}         //递归体结束位置，在此处添加短子序列使用插入排序
+        // if(hi-lo<=M){SortInsert.sort(a,lo,hi);return;} //子序列使用插入，M=5~~~~15;
         int j = partition(a, lo, hi); //j 就是v 实际所在位置
         sort(a, lo, j - 1);
         sort(a, j + 1, hi);
@@ -32,19 +35,25 @@ public class SortQuick {
             if (i >= j) break;
             SortInsert.exch(a, i, j);
         }
+
         SortInsert.exch(a, lo, j);   //将V放到正确的地方
         return j;
     }
 
     public static void main(String[] args) {
-        int N = 8000000;
+        /*int N = 8000;
         Integer[] arr = new Integer[N];
         for (int i = 0; i < N; i++) arr[i] = (int) (Math.random() * N);
         Date date1=new Date();
         System.out.println(date1.toString());
         SortQuick.sort(arr);
         Date date2=new Date();
-        System.out.println(date2.toString());
+        System.out.println(date2.toString());*/
+
+
+        Integer[] arr1={0,-1};
+        sort(arr1);
+        SortInsert.show(arr1);
         //测试代码一般会添加assert语句，确保排序后数组是有序的
         //assert SortInsert.isSorted(str) : "sort function is wrong";
         //SortInsert.show(arr);
