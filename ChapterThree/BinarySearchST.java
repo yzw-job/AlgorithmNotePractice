@@ -13,6 +13,9 @@ import java.util.Iterator;
  *      Key select(int k)                       第K个键值
  *      Key floor(Key key)                      小于key 的最大值
  *      Key ceiling(Key key)                    大于key 的最小值
+ *      Value get(Key key)
+ *      void put(Key key,Value value)
+ *      delete(Key key)
  *
  *      --------------------------------------------------------------------
  */
@@ -33,10 +36,11 @@ public class BinarySearchST<Key extends Comparable<Key>,Value> {
      * 获得key 对应的元素，没有则返回null
      */
     public Value get(Key key){
-        if(isEmpty())return null;
-        int i = rank(key);
-        if(i>=N)return null;
-        else return values[i];
+        int i=rank(key);
+        if(i<N&&key.compareTo(keys[i])==0){ // 能找到
+            return values[i];
+        }
+        else return null;
     }
 
     /**
@@ -49,7 +53,7 @@ public class BinarySearchST<Key extends Comparable<Key>,Value> {
             values[i]=value;return;
         }
 
-        // 未找到
+        // 未找到 i 为插入位置，其他向后移位置
         for(int j=N;j>i;j--){
             keys[j]=keys[j-1];
             values[j]=values[j-1];
@@ -72,7 +76,7 @@ public class BinarySearchST<Key extends Comparable<Key>,Value> {
         //递归实现
 
         if(hi<lo)return lo; // 递归头 未命中，lo 即为所有大于查找的元素，的最小元素 a[lo-1]<value,a[lo]>value
-                            // 对于value 小于 所有元素lo=0;大于所有元素，lo=hig+1;
+        // 对于value 小于 所有元素lo=0;大于所有元素，lo=hig+1;
         int mid = lo + (hi - lo) / 2;
         if (less(key,keys[mid])) return rank(key, lo, mid - 1);
         else if (less(keys[mid],key)) return rank(key, mid + 1, hi);
@@ -90,12 +94,29 @@ public class BinarySearchST<Key extends Comparable<Key>,Value> {
 
     public Key min(){return keys[0];}
     public Key max(){return keys[N-1];}
-    public Key select(int k){return keys[k];}
+    public Key select(int k){
+        if(isEmpty()){
+            System.out.println("Table is empty");
+            return null;
+        }
+        if (0<=k&&k<N){
+            return keys[k];
+        }
+        System.out.println("key out of index");
+        return null;
+
+    }
+
     public Key ceiling(Key key){
-        return key;
+        int i =rank(key);
+        if(i>=N) return null;
+        return keys[i];
     }
     public Key floor(Key key){
-        return key;
+        int i =rank(key);
+        if(i>=N) return keys[N-1];
+        if(i==0)return null;
+        return keys[i-1];
     }
 
     // 实现迭代器
@@ -122,12 +143,25 @@ public class BinarySearchST<Key extends Comparable<Key>,Value> {
 
     public static void main(String[] args) {
 
-        Integer[] arr={0,1,2,4,5,8};
-        BinarySearchST<Integer,Integer> bs=new BinarySearchST(6);
-        System.out.println(bs.rank(10,0,5));
+        // construct symbol table <Sting , Integer>
+        String[] arr={"b","m","h","d","f","e"};
+        BinarySearchST<String,Integer> bs=new BinarySearchST(6);
+        bs.put(arr[0],1);
+        bs.put(arr[1],2);
+        bs.put(arr[2],3);
+        bs.put(arr[3],4);
+        bs.put(arr[4],5);
+        bs.put(arr[5],6);
 
+        // function test
+        System.out.println("max key is : "+bs.max());
+        System.out.println("min key is : "+bs.min());
+        System.out.println("select 3th key is : "+bs.select(0));
+        System.out.println("ceiling a is :" + bs.ceiling("a"));
+        System.out.println("floor a is :" + bs.floor("a"));
+        System.out.println("find a is :" + bs.get("a"));
         // 迭代器遍历
-        for (Iterator<Integer> it = bs.iterator();it.hasNext();){
+        for (Iterator<String> it = bs.iterator(); it.hasNext();){
             System.out.print(it.next()+" ");
         }
 
