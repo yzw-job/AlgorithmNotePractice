@@ -38,7 +38,7 @@ public class BinarySearchTree <Key extends Comparable<Key>, Value>{
 
     // 查找某节点对应的值
     public Value get(Key key){
-        return get(root,key);// 从根节点出发 digui
+        return get(root,key);// 从根节点出发 递归
     }
     private Value get(Node node,Key key){
         if(node==null)return null;
@@ -62,26 +62,122 @@ public class BinarySearchTree <Key extends Comparable<Key>, Value>{
         if(cmp<0)node.left=put(node.left,key,value);
         else if(cmp>0)node.right=put(node.right,key,value);
         else node.value=value; // 找到
-        node.N=node.left.N+node.right.N+1;
+//        node.N=node.left.N+node.right.N+1; // node.left可能会空引用，没有初始化N变量
+        node.N=size(node.left)+size(node.right)+1;
         return node;
     }
 
-    private boolean isEmpty(){
-        return root.N==0;
+    // 查找最小的键值 依次查找左子节点
+    public Key min(){
+        return min(root);
+    }
+    private Key min(Node x){
+        if(x==null)return null;
+        if (x.left!=null){// 父节点的左边子节点存在，向下找
+            return min(x.left);
+        }
+        return x.key;
+    }
+
+    // 查找最大的键值 依次查找右子节点
+    public Key max(){
+        return max(root);
+    }
+    private Key max(Node x) {
+        if(x==null)return null; // 判断父节点是否为空
+        if(x.right!=null)return max(x.right);
+        return x.key;
+    }
+
+    // 大于节点值向节点右子节点边找，（右边的值大）
+    // 小于节点值向节点左边找，（左边值比较小），左边找到头没了，则该父节点就是。
+
+    public Key ceiling(Key key){
+        Node x=ceiling(root,key);
+        if(x==null)return null;
+        else return x.key;
+    }
+    private Node ceiling(Node x, Key key) {
+        if(x==null)return null;
+        int cmp=key.compareTo(x.key);
+        if(cmp==0)return x;         //找到等于
+        if(cmp<0){ // key 小于该节点，向左边找更接近的值，左边如果没找到，则该父节点就是。
+            Node temp=ceiling(x.left,key);
+            if(temp==null)return x;
+            else return temp;
+        }
+
+        // key 大 向右找
+        return ceiling(x.right,key);
+
+    }
+
+
+    public Key floor(Key key){
+        Node x=floor(root,key);
+        if(x==null)return null;
+        return x.key;
+    }
+
+    private Node floor(Node x, Key key) {
+        if(x==null)return null;
+        int cmp= key.compareTo(x.key);
+        if (cmp==0)return x;
+        if(cmp<0)return floor(x.left,key);
+
+        // cmp>0
+        Node t=floor(x.right,key);
+        if(t!=null)return t;
+        else return x;
+    }
+
+
+    public int rank(Key key){
+        return rank(root,key);
+    }
+    // 小于key 的个数。key 左边全部小于key
+    private int rank(Node x,Key key){
+        if(x==null)return 0;
+        int cmp= key.compareTo(x.key);
+        if(cmp<0)return rank(x.left,key);   //节点值大于key，继续找直到节点值小于key,那么节点值左边的都小于key
+        else if(cmp>0)return size(x.left)+rank(x.right,key)+1;// 找到该节点，因为不等于，左边的加上本身，以及右边找到的
+        else return size(x.left);// 等于
+    }
+
+    public void deleteMin(){
+        root = deleteMin(root);
+    }
+    // 一直向左边找，直到空，并且把父节点指向它的有节点即可
+    private Node deleteMin(Node x){
+        if(x.left==null) return x.right;//记录右子节点
+        x.left = deleteMin(x.left);//一直相左找 x.left 指向下一个
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
     }
 
     public static void main(String[] args) {
-        // construct symbol table <Sting , Integer>
-        String[] arr={"b","m","h","d","f","e"};
-        BinarySearchTree<String,Integer> bs=new BinarySearchTree();
-        bs.put(arr[0],1);
-//        bs.put(arr[1],2);
-//        bs.put(arr[2],3);
-//        bs.put(arr[3],4);
-//        bs.put(arr[4],5);
-//        bs.put(arr[5],6);
+        // construct symbol table <String , String>
 
-        System.out.println(bs.get("c"));
+        BinarySearchTree<Double,String> bt=new BinarySearchTree();
+        bt.put(1.0,"b is b");
+        bt.put(28.0,"b is b");
+        bt.put(34.0,"b is b");
+        bt.put(40.0,"b is b");
+        bt.put(50.0,"b is b");
+        bt.put(69.0,"b is b");
+        bt.put(71.0,"b is b");
+        bt.put(88.8,"b is b");
+        bt.put(99.4,"b is b");
+
+//        System.out.println(bt.get(11.0));
+//        System.out.println(bt.min());
+//        System.out.println(bt.max());
+//        System.out.println(bt.ceiling("ab"));
+//        System.out.println(bt.floor("ab"));
+//        System.out.println(bt.ceiling(19.5));
+        System.out.println(bt.rank(58.0));
+        bt.deleteMin();
+        System.out.println(bt.min());
     }
 
 
